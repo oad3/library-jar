@@ -1,0 +1,59 @@
+plugins {
+	id 'java'
+	id 'maven-publish'
+}
+
+group = 'com.library'
+version = ''
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+jar {
+	manifest {
+		attributes 'Main-Class': 'com.library.LibraryJar'
+	}
+}
+
+test {
+	testLogging {
+		showStandardStreams true
+		events 'started', 'skipped', 'passed', 'failed'
+		exceptionFormat 'full'
+	}
+}
+
+publishing { 
+	publications { 
+		myPublication(MavenPublication) { 
+			groupId 'LibraryJar-groupId' 
+			artifactId 'library-jar' 
+			version '0.0.2'				 // Your package version
+			artifact 'library-jar.jar'	//Example: *./target/myJavaClasses.jar*
+		} 
+	} 
+
+	// Repositories *to* which Gradle can publish artifacts 
+	repositories { 
+		maven { 
+			url 'https://pkgs.dev.azure.com/SecOrgOad3/cicd-training-env/_packaging/cicd-training-env-feed-001/maven/v1' 
+			credentials { 
+				username "cicd-training-env-feed-001" 
+				password System.getenv("SYSTEM_ACCESSTOKEN") != null ? System.getenv("SYSTEM_ACCESSTOKEN") : vstsMavenAccessToken 
+			} 
+		}
+	}
+} 
+
+// Repositories *from* which Gradle can download dependencies
+repositories { 
+	maven { 
+		url 'https://pkgs.dev.azure.com/SecOrgOad3/cicd-training-env/_packaging/cicd-training-env-feed-001/maven/v1' 
+		credentials { 
+			username "cicd-training-env-feed-001" 
+			password System.getenv("SYSTEM_ACCESSTOKEN") != null ? System.getenv("SYSTEM_ACCESSTOKEN") : vstsMavenAccessToken 
+		} 
+	} 
+}
